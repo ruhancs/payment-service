@@ -43,7 +43,6 @@ type PaymentInputDto struct {
 	ExpiryMonth   int    `json:"exp_month"`
 	ExpiryYear    int    `json:"exp_year"`
 	Plan          string `json:"plan"`
-	ProductID     string `json:"product_id"`
 	FirstName     string `json:"first_name"`
 	LastName      string `json:"last_name"`
 }

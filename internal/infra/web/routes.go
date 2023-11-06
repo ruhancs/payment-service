@@ -12,7 +12,10 @@ func (app *Application) routes() http.Handler {
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.Heartbeat("/health"))
 
-	mux.Post("/payment/{orderID}", app.PaymentHandler)
+	mux.Route("/payment",func(r chi.Router) {
+		mux.Use(app.Auth)
+		mux.Post("/payment", app.PaymentHandler)
+	})
 
 	return mux
 }

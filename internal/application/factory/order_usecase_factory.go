@@ -8,28 +8,22 @@ import (
 	"payment-service/internal/infra/repository"
 )
 
-
-func CreateOrderUsecaseFactory(db *sql.DB) *usecase.CreateOrderUseCase {
-	orderRepository := repository.NewOrderRepository(db)
-	createOrderUseCase := usecase.NewCreateOrderUseCase(orderRepository)
-	return createOrderUseCase
-}
-
 func GetOrderUsecaseFactory(db *sql.DB) *usecase.GetOrderUseCase {
 	orderRepository := repository.NewOrderRepository(db)
 	getOrderUseCase := usecase.NewGetOrderUseCase(orderRepository)
 	return getOrderUseCase
 }
 
-func UpdateOrderStatusUsecaseFactory(db *sql.DB) *usecase.UpdateOrderUseCase {
+func PaymentUseCaseUsecaseFactory(db *sql.DB) *usecase.PaymentUseCase {
 	orderRepository := repository.NewOrderRepository(db)
 	transactionRepository := repository.NewTransactionRepository(db)
+	customerRepository := repository.NewCustomerRepository(db)
 	gatewayPayment := paymentgateway.StripeCard{
 		Secret: os.Getenv("STRIPE_SK"),
 		Key: os.Getenv("STRIPE_PK"),
 		Currency: "brl",
 	}
-	updateOrderStatusUseCase := usecase.NewUpdateOrderUseCase(orderRepository,transactionRepository,&gatewayPayment)
+	updateOrderStatusUseCase := usecase.NewPaymentUseCase(orderRepository,transactionRepository,customerRepository,&gatewayPayment)
 	return updateOrderStatusUseCase
 }
 

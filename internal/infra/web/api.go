@@ -9,13 +9,13 @@ import (
 
 type Application struct {
 	GetOrderUseCase    *usecase.GetOrderUseCase
-	UpdateOrderUseCase *usecase.UpdateOrderUseCase
+	PaymentUseCase *usecase.PaymentUseCase
 }
 
-func NewApplication(getOrderUsecase *usecase.GetOrderUseCase, updateOrderUsecase *usecase.UpdateOrderUseCase) *Application {
+func NewApplication(getOrderUsecase *usecase.GetOrderUseCase, paymentUseCase *usecase.PaymentUseCase) *Application {
 	return &Application{
 		GetOrderUseCase: getOrderUsecase,
-		UpdateOrderUseCase: updateOrderUsecase,
+		PaymentUseCase: paymentUseCase,
 	}
 }
 

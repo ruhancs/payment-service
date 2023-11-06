@@ -11,6 +11,29 @@ import (
 	"time"
 )
 
+const createCustomer = `-- name: CreateCustomer :exec
+INSERT INTO customers (id,first_name,last_name,email,is_active) VALUES ($1,$2,$3,$4,$5)
+`
+
+type CreateCustomerParams struct {
+	ID        string
+	FirstName string
+	LastName  sql.NullString
+	Email     string
+	IsActive  bool
+}
+
+func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) error {
+	_, err := q.db.ExecContext(ctx, createCustomer,
+		arg.ID,
+		arg.FirstName,
+		arg.LastName,
+		arg.Email,
+		arg.IsActive,
+	)
+	return err
+}
+
 const createOrder = `-- name: CreateOrder :exec
 INSERT INTO orders (id,amount,plan,customer_id,first_name,last_name,email,status,transaction_id,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
 `
@@ -65,8 +88,8 @@ type CreateTransactionParams struct {
 	Currency          string
 	PaymentIntent     string
 	PaymentMethod     string
-	ExpireMonth       string
-	ExpireYear        string
+	ExpireMonth       int32
+	ExpireYear        int32
 	TransactionStatus sql.NullString
 	CreatedAt         time.Time
 	UpdatedAt         sql.NullTime
@@ -97,6 +120,40 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 		&i.TransactionStatus,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getCustomerByEmail = `-- name: GetCustomerByEmail :one
+SELECT id, first_name, last_name, email, is_active FROM customers WHERE email = $1 LIMIT 1
+`
+
+func (q *Queries) GetCustomerByEmail(ctx context.Context, email string) (Customer, error) {
+	row := q.db.QueryRowContext(ctx, getCustomerByEmail, email)
+	var i Customer
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.IsActive,
+	)
+	return i, err
+}
+
+const getCustomerById = `-- name: GetCustomerById :one
+SELECT id, first_name, last_name, email, is_active FROM customers WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetCustomerById(ctx context.Context, id string) (Customer, error) {
+	row := q.db.QueryRowContext(ctx, getCustomerById, id)
+	var i Customer
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.IsActive,
 	)
 	return i, err
 }

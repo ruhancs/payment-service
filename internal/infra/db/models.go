@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+type Customer struct {
+	ID        string
+	FirstName string
+	LastName  sql.NullString
+	Email     string
+	IsActive  bool
+}
+
 type Order struct {
 	ID            string
 	Amount        int32
@@ -28,8 +36,8 @@ type Transaction struct {
 	Currency          string
 	PaymentIntent     string
 	PaymentMethod     string
-	ExpireMonth       string
-	ExpireYear        string
+	ExpireMonth       int32
+	ExpireYear        int32
 	TransactionStatus sql.NullString
 	CreatedAt         time.Time
 	UpdatedAt         sql.NullTime

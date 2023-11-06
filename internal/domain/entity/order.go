@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
+	uuid "github.com/satori/go.uuid"
 )
 
 type Order struct {
@@ -19,16 +20,16 @@ type Order struct {
 	CreatedAt     time.Time `json:"created_at"`
 }
 
-func NewOrder(id,plan, firstName, lastName, Email string, amount int) (*Order, error) {
+func NewOrder(plan, firstName, lastName, Email, status, transactionID string, amount int) (*Order, error) {
 	order := &Order{
-		ID:            id,
+		ID:            uuid.NewV4().String(),
 		Amount:        amount,
 		Plan:          plan,
 		FirstName:     firstName,
 		LastName:      lastName,
 		Email:         Email,
-		Status:        "pending",
-		TransactionID: "no-transaction",
+		Status:        status,
+		TransactionID: transactionID,
 		CreatedAt:     time.Now(),
 	}
 	err := order.validate()

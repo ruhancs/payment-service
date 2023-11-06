@@ -27,8 +27,8 @@ func(repo *TransactionRepository) Create(ctx context.Context,transaction *entity
 		PaymentIntent: transaction.PaymentIntent,
 		PaymentMethod: transaction.PaymentMethod,
 		TransactionStatus: sql.NullString{String: status,Valid: true},
-		ExpireMonth: "",// TODO fix db
-		ExpireYear: "",
+		ExpireMonth: int32(transaction.ExpireMonth),
+		ExpireYear: int32(transaction.ExpireYear),
 		CreatedAt: transaction.CreatedAt,
 		UpdatedAt: sql.NullTime{Time: transaction.UpdatedAt,Valid: true},
 	})

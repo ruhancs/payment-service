@@ -24,7 +24,16 @@ CREATE TABLE "transactions" (
   "updated_at" timestamptz
 );
 
+CREATE TABLE "customers" (
+  "id" varchar NOT NULL PRIMARY KEY,
+  "first_name" varchar NOT NULL,
+  "last_name" varchar,
+  "email" varchar UNIQUE NOT NULL,
+  "is_active" boolean NOT NULL
+);
+
 ALTER TABLE "orders" ADD FOREIGN KEY ("transaction_id") REFERENCES "transactions" ("id");
+ALTER TABLE "orders" ADD FOREIGN KEY ("email") REFERENCES "customers" ("email");
 
 CREATE INDEX ON "orders" ("email");
 
