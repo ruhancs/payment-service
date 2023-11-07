@@ -37,10 +37,10 @@ func (usecase *PaymentUseCase) Execute(ctx context.Context, input dto.PaymentInp
 
 	customer,err := usecase.CustomerRepository.GetByEmail(ctx,input.Email)
 	if err != nil {
-		customerCreatedID, msgErr, err := usecase.PaymentGateway.CreateCustomer(input.PaymentMethod, input.Email)
+		customerCreatedID, msgErr, err := usecase.createCustomerOnPaymentGateway(ctx,input.PaymentMethod,input.Email)
 		if err != nil {
-			check = false
 			statusMSG = msgErr
+			check = false
 		}
 		customerID = customerCreatedID
 	}
@@ -90,4 +90,22 @@ func (usecase *PaymentUseCase) Execute(ctx context.Context, input dto.PaymentInp
 	}
 
 	return output, statusMSG, nil
+}
+
+func(usecase *PaymentUseCase) createCustomerOnPaymentGateway(ctx context.Context,paymentMethod, email string) (string,string,error) {
+	customerCreatedID, msgErr, err := usecase.PaymentGateway.CreateCustomer(paymentMethod, email)
+		if err != nil {
+			return customerCreatedID,msgErr,err 
+		}
+		customerEntity := entity.NewCustomer()
+		customerEntity.ID = customerCreatedID
+		customerEntity.Email = email
+		customerEntity.IsActive = true
+		err = usecase.CustomerRepository.Create(ctx,customerEntity)
+		if err != nil {
+			//criar rollback
+			msgErr = "created user on gateway payment but failed to insert on db, customerID: " + customerCreatedID
+			return customerCreatedID,msgErr,err 
+		}
+		return customerCreatedID,msgErr,nil
 }

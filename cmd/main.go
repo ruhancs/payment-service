@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"net/http"
 	"os"
 	"payment-service/internal/application/factory"
 	"payment-service/internal/infra/web"
@@ -24,7 +26,13 @@ func main() {
 
 	getOrderUseCase := factory.GetOrderUsecaseFactory(conn)
 	paymentUseCase := factory.PaymentUseCaseUsecaseFactory(conn)
-	app := web.NewApplication(getOrderUseCase,paymentUseCase)
+	var srv = &http.Server{}
+	app := web.NewApplication(getOrderUseCase,paymentUseCase,srv)
+	
+	errChan := make(chan error)
+	go app.GracefullyShutdown(errChan)
 
-	app.Server()
+	if err := <- errChan; err != nil {
+		fmt.Println(err)
+	}
 }
