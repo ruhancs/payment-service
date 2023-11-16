@@ -10,6 +10,14 @@ services:
       TZ: Sao_Paulo/Brazil
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+  
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - ./db-data/redis/:/data
 
   kafka:
     image: "confluentinc/cp-enterprise-kafka:6.1.0"

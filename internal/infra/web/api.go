@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"payment-service/internal/application/usecase"
+	"payment-service/pkg/worker"
 	"syscall"
 	"time"
 )
@@ -14,14 +15,21 @@ type Application struct {
 	GetOrderUseCase *usecase.GetOrderUseCase
 	PaymentUseCase  *usecase.PaymentUseCase
 	SRV             *http.Server
+	TaskDistributor worker.TaskDistributorInterface
 	//WG              *sync.WaitGroup
 }
 
-func NewApplication(getOrderUsecase *usecase.GetOrderUseCase, paymentUseCase *usecase.PaymentUseCase,srv *http.Server) *Application {
+func NewApplication(
+	getOrderUsecase *usecase.GetOrderUseCase,
+	paymentUseCase *usecase.PaymentUseCase,
+	srv *http.Server,
+	taskDist worker.TaskDistributorInterface,
+) *Application {
 	return &Application{
 		GetOrderUseCase: getOrderUsecase,
 		PaymentUseCase:  paymentUseCase,
-		SRV: srv,
+		SRV:             srv,
+		TaskDistributor: taskDist,
 	}
 }
 
